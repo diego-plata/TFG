@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Seleccionar Dispositivos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+
+        fieldset {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        legend {
+            color: #00796b;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        input[type="checkbox"] {
+            margin-bottom: 8px;
+        }
+
+        label {
+            display: inline-block;
+            margin-left: 5px;
+            color: #333;
+        }
+
+        input[type="button"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00796b;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        /* Tema Oscuro */
+        body.dark-theme {
+            background-color: #263238;
+            color: #ddd;
+        }
+
+        body.dark-theme h1 {
+            color: #90a4ae;
+        }
+
+        body.dark-theme fieldset {
+            border-color: #90a4ae;
+        }
+
+        body.dark-theme legend {
+            color: #90a4ae;
+        }
+
+        body.dark-theme label {
+            color: #90a4ae;
+        }
+
+        body.dark-theme input[type="button"] {
+            background-color: #00796b;
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        function ejecutarScript() { //se hace esto para asegurarnos que se ejecuta el disp.js despues del py
+            fetch('/ejecutar_script')
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Script ejecutado correctamente');
+
+                    } else {
+                        console.error('Error al ejecutar el script');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al ejecutar el script:', error);
+                });
+        }
+
+        function guardarDispositivos() {
+            var dispositivosSeleccionados = [];
+            var checkboxes = document.querySelectorAll('input[name="dispositivos[]"]:checked');
+            checkboxes.forEach(function(checkbox) {
+                dispositivosSeleccionados.push(checkbox.value);
+            });
+            document.getElementById('dispositivosSeleccionados').value = dispositivosSeleccionados.join(',');
+            document.getElementById('dispositivosForm').submit();
+        }
+
+        function cambiarTema() {
+            var body = document.body;
+            body.classList.toggle("dark-theme");
+        }
+    </script>
+</head>
+
+<body onload="ejecutarScript()">
+    <div class="container">
+        <h1>Seleccionar Dispositivos</h1>
+        <form id="dispositivosForm" action="{{ url_for('usuarios.seleccionar_dispositivos') }}" method="post">
+            <fieldset>
+                <legend>Dispositivos Disponibles:</legend>
+                {% for dispositivo in dispositivos %}
+                <input type="checkbox" id="{{ dispositivo }}" name="dispositivos[]" value="{{ dispositivo }}" {% if dispositivo in dispositivos_seleccionados %} checked {% endif %}>
+                <label for="{{ dispositivo }}">{{ dispositivo }}</label><br>
+                {% endfor %}
+            </fieldset>
+            <br>
+            <input type="hidden" id="dispositivosSeleccionados" name="dispositivos_seleccionados" value="">
+            <input type="button" value="Guardar Dispositivos" onclick="guardarDispositivos()">
+        </form>
+        <button onclick="cambiarTema()">Cambiar Tema</button>
+    </div>
+</body>
+
+</html>

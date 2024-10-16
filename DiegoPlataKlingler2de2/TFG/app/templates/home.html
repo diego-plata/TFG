@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> <!-- hace falta para el icono del cambio de tema -->
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            right: -250px;
+            background-color: #ffffff;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.dark-theme {
+            background-color: #263238;
+            color: #ffffff;
+        }
+
+        .sidebar.dark-theme a:hover {
+            color: #f8f9fa;
+        }
+
+        .sidebar.light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .sidebar.light-theme a:hover {
+            color: #6c757d;
+        }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .main-content {
+            transition: margin-right 0.5s;
+            padding: 16px;
+        }
+
+        .user-icon {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #000;
+            font-size: 24px;
+        }
+
+        .user-icon img {
+            width: 40px;
+            border-radius: 50%;
+        }
+
+        .theme-btn {
+            position: fixed;
+            top: 10px;
+            right: 60px;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .theme-btn i {
+            margin-right: 5px;
+        }
+
+        h1,
+        h2 {
+            color: #00796b;
+        }
+
+        h1.dark-theme,
+        h2.dark-theme {
+            color: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #00796b;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e0f7fa;
+        }
+
+        tr:hover {
+            background-color: #b2dfdb;
+        }
+
+        th.dark-theme,
+        td.dark-theme {
+            background-color: #263238;
+            color: #ffffff;
+        }
+
+        tr.dark-theme:nth-child(even) {
+            background-color: #37474f;
+        }
+
+        tr.dark-theme:hover {
+            background-color: #455a64;
+        }
+
+        #dispositivos-container {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #dispositivos-container.dark-theme {
+            background-color: #263238;
+            color: #ffffff;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 500px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #00796b;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .input-group button {
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-group button:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+
+<body onload="ejecutarScript()">
+    <div class="main-content" id="main-content">
+        <h1 id="use-title">¡Bienvenido, {{ usuario.username }}!</h1>
+        <h2 id="city-title">Pronóstico para Salamanca</h2>
+    </div>
+
+    <div class="sidebar light-theme" id="sidebar">
+        <a href="/perfil" style="color: #00796b;">Perfil</a>
+        <br>
+        <a href="/logout" style="color: #00796b;">Cerrar Sesión</a>
+        <span class="close-btn" onclick="closeSidebar()">&times;</span>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="city-input" placeholder="Ingrese el nombre de la ciudad" style="margin-left: 10px;">
+        <button onclick="actualizarPronostico()">Actualizar Pronóstico</button>
+    </div>
+
+    <div class="main-content" id="main-content">
+        <span class="user-icon" onclick="openSidebar()"><img src="/static/user-icon.png" alt="User Icon"></span>
+        <script src="static/weather.js"></script>
+        <script src="static/dispositivos.js"></script>
+        <div id="tabla-container"></div>
+        <div id="dispositivos-container"></div>
+    </div>
+
+    <button class="theme-btn" id="theme-btn" onclick="changeTheme()">
+        <i id="theme-icon" class="fas fa-sun" style="color: white;"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            ejecutarScript();
+        });
+
+        function openSidebar() {
+            document.getElementById("sidebar").style.right = "0";
+            document.getElementById("main-content").style.marginRight = "250px";
+        }
+
+        function closeSidebar() {
+            document.getElementById("sidebar").style.right = "-250px";
+            document.getElementById("main-content").style.marginRight = "0";
+        }
+
+        function changeTheme() {
+            var themeBtn = document.getElementById("theme-btn");
+            var themeIcon = document.getElementById("theme-icon");
+            var sidebar = document.getElementById("sidebar");
+            var body = document.body;
+            var headings = document.querySelectorAll("h1, h2");
+            var tables = document.querySelectorAll("table, th, td, tr");
+            var dispositivosContainer = document.getElementById("dispositivos-container");
+
+            if (themeIcon.classList.contains("fa-sun")) {
+                body.style.backgroundColor = "#263238";
+                body.style.color = "#ffffff";
+                themeIcon.classList.remove("fa-sun");
+                themeIcon.classList.add("fa-moon");
+                sidebar.classList.remove("light-theme");
+                sidebar.classList.add("dark-theme");
+                themeBtn.style.backgroundColor = "#ffffff";
+                themeIcon.style.color = "#263238";
+
+                headings.forEach(heading => {
+                    heading.classList.add("dark-theme");
+                });
+
+                tables.forEach(table => {
+                    table.classList.add("dark-theme");
+                });
+
+                dispositivosContainer.classList.add("dark-theme");
+            } else {
+                body.style.backgroundColor = "#e0f7fa";
+                body.style.color = "#000000";
+                themeIcon.classList.remove("fa-moon");
+                themeIcon.classList.add("fa-sun");
+                sidebar.classList.remove("dark-theme");
+                sidebar.classList.add("light-theme");
+                themeBtn.style.backgroundColor = "#00796b";
+                themeIcon.style.color = "#ffffff";
+
+                headings.forEach(heading => {
+                    heading.classList.remove("dark-theme");
+                });
+
+                tables.forEach(table => {
+                    table.classList.remove("dark-theme");
+                });
+
+                dispositivosContainer.classList.remove("dark-theme");
+            }
+        }
+
+        function ejecutarScript() { //se hace esto para asegurarnos que se ejecuta el disp.js despues del py
+            fetch('/ejecutar_script')
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Script ejecutado correctamente');
+                        // Llama a la función para cargar dispositivos.js
+                        cargarDispositivosJS();
+                    } else {
+                        console.error('Error al ejecutar el script');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al ejecutar el script:', error);
+                });
+        }
+
+        function cargarDispositivosJS() {
+            // Crea un nuevo script element y establece su src en dispositivos.js
+            var script = document.createElement('script');
+            script.src = 'static/dispositivos.js';
+            // Agrega el script al final del cuerpo del documento
+            document.body.appendChild(script);
+        }
+    </script>
+
+</body>
+
+</html>

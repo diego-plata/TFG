@@ -1,0 +1,231 @@
+{
+    "Usuario": {
+      "/registro": {
+        "post": {
+          "tags": ["Usuario"],
+          "summary": "Registrar un nuevo usuario",
+          "responses": {
+            "200": {
+              "description": "Usuario registrado con éxito"
+            },
+            "400": {
+              "description": "Error al registrar el usuario"
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": ["Usuario"],
+          "summary": "Iniciar sesión de usuario",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "formData",
+              "type": "string",
+              "required": true,
+              "description": "Nombre de usuario"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "type": "string",
+              "required": true,
+              "description": "Contraseña del usuario"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Inicio de sesión exitoso"
+            },
+            "400": {
+              "description": "Nombre de usuario o contraseña incorrectos"
+            }
+          }
+        }
+      },
+      "/logout": {
+        "get": {
+          "tags": ["Usuario"],
+          "summary": "Cerrar sesión",
+          "responses": {
+            "200": {
+              "description": "Sesión cerrada exitosamente"
+            }
+          }
+        }
+      },
+      "/home": {
+        "get": {
+          "tags": ["Usuario"],
+          "summary": "Página principal del usuario",
+          "responses": {
+            "200": {
+              "description": "Página principal mostrada correctamente"
+            }
+          }
+        }
+      },
+      "/perfil": {
+        "get": {
+          "tags": ["Usuario"],
+          "summary": "Mostrar perfil del usuario",
+          "responses": {
+            "200": {
+              "description": "Perfil del usuario mostrado correctamente"
+            }
+          }
+        }
+      },
+      "/actualizar_perfil": {
+        "post": {
+          "tags": ["Usuario"],
+          "summary": "Actualizar perfil del usuario",
+          "parameters": [
+            {
+              "name": "nombre",
+              "in": "formData",
+              "type": "string",
+              "required": false,
+              "description": "Nuevo nombre de usuario"
+            },
+            {
+              "name": "email",
+              "in": "formData",
+              "type": "string",
+              "required": false,
+              "description": "Nuevo email del usuario"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "type": "string",
+              "required": false,
+              "description": "Nueva contraseña del usuario"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Perfil actualizado exitosamente"
+            },
+            "400": {
+              "description": "Error al actualizar el perfil"
+            }
+          }
+        }
+      },
+      "/seleccionar_dispositivos": {
+        "get": {
+          "tags": ["Usuario"],
+          "summary": "Seleccionar dispositivos",
+          "responses": {
+            "200": {
+              "description": "Página de selección de dispositivos mostrada correctamente"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Usuario"],
+          "summary": "Guardar dispositivos seleccionados",
+          "responses": {
+            "200": {
+              "description": "Dispositivos seleccionados guardados correctamente"
+            }
+          }
+        }
+      },
+      "/obtener_dispositivos_registrados_id": {
+        "get": {
+          "tags": ["Usuario"],
+          "summary": "Obtener dispositivos registrados del usuario",
+          "responses": {
+            "200": {
+              "description": "Dispositivos registrados obtenidos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "Dispositivos": {
+      "/ejecutar_script": {
+        "get": {
+          "tags": ["Dispositivos"],
+          "summary": "Ejecutar el script leer_disp.py",
+          "responses": {
+            "200": {
+              "description": "Script ejecutado correctamente"
+            }
+          }
+        }
+      },
+      "/colecciones/{filename}": {
+        "get": {
+          "tags": ["Dispositivos"],
+          "summary": "Servir archivos estáticos desde la carpeta 'colecciones'",
+          "parameters": [
+            {
+              "name": "filename",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Nombre del archivo estático a servir"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Archivo estático servido correctamente"
+            },
+            "404": {
+              "description": "Archivo no encontrado"
+            }
+          }
+        }
+      },
+      "/cargar_html": {
+        "get": {
+          "tags": ["Dispositivos"],
+          "summary": "Cargar datos HTML desde MongoDB",
+          "parameters": [
+            {
+              "name": "nombre",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": "Nombre de la colección en MongoDB"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Datos HTML cargados correctamente",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "success": true,
+                    "humedad_ambiente": {
+                      "x": ["2023-07-02 10:00:00", "2023-07-02 11:00:00"],
+                      "y": [50, 55]
+                    },
+                    "temperatura_ambiente": {
+                      "x": ["2023-07-02 10:00:00", "2023-07-02 11:00:00"],
+                      "y": [25, 26]
+                    },
+                    "humedad_suelo": {
+                      "x": ["2023-07-02 10:00:00", "2023-07-02 11:00:00"],
+                      "y": [60, 65]
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Error: No hay nombre en la solicitud"
+            },
+            "500": {
+              "description": "Error: Error al cargar HTML"
+            }
+          }
+        }
+      }
+    }
+  }
+  

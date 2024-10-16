@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dispositivos</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body onload="ejecutarScript()">
+    <div id="nombreDispositivo" style="text-align: center; font-size: 24px; margin-bottom: 20px;"></div>
+    <div id="graficas_data1"></div>
+    <div id="graficas_data2"></div>
+    <div id="graficas_data3"></div>
+    <script>
+        
+
+        var pintar_humedad_ambiente = {
+            x: [],
+            y: [],
+            mode: "lines",
+            name: "Humedad ambiente"
+        };
+        var pintar_temperatura_ambiente = {
+            x: [],
+            y: [],
+            mode: "lines",
+            name: "Temperatura ambiente"
+        };
+        var pintar_humedad_suelo = {
+            x: [],
+            y: [],
+            mode: "lines",
+            name: "Humedad suelo"
+        };
+        var layout_humedad_ambiente = {
+            title: "Humedad Ambiente",
+            xaxis: {
+                title: "Fecha y Hora"
+            },
+            yaxis: {
+                title: "Valor"
+            }
+        };
+        var layout_temperatura_ambiente = {
+            title: "Temperatura Ambiente",
+            xaxis: {
+                title: "Fecha y Hora"
+            },
+            yaxis: {
+                title: "Valor"
+            }
+        };
+        var layout_humedad_suelo = {
+            title: "Humedad Suelo",
+            xaxis: {
+                title: "Fecha y Hora"
+            },
+            yaxis: {
+                title: "Valor"
+            }
+        };
+
+        var data1 = [pintar_humedad_ambiente];
+        var data2 = [pintar_temperatura_ambiente];
+        var data3 = [pintar_humedad_suelo];
+
+        Plotly.newPlot("graficas_data1", data1, layout_humedad_ambiente);
+        Plotly.newPlot("graficas_data2", data2, layout_temperatura_ambiente);
+        Plotly.newPlot("graficas_data3", data3, layout_humedad_suelo);
+
+        function ejecutarScript() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nombreDispositivo = urlParams.get("nombre");
+            if (nombreDispositivo) {
+                document.title = nombreDispositivo; // titulo pestaña nav
+                document.getElementById('nombreDispositivo').textContent = ` ${nombreDispositivo}`; // div con nombre disp
+                fetch(`/cargar_html?nombre=${encodeURIComponent(nombreDispositivo)}`)
+                    .then(response => response.text())
+                    .then(text => {
+                        try {
+                            const data = JSON.parse(text);
+                            if (data.success) {
+                                actualizarGraficas(data);
+                            } else {
+                                console.error("Error en los datos recibidos:", data.error);
+                            }
+                        } catch (error) {
+                            console.error("Error al parsear JASON:", error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al ejecutar el script:", error);
+                    });
+            } else {
+                console.error("Nombre del dispositivo no encontrado en la URL");
+            }
+        }
+
+        function actualizarGraficas(data) {
+            pintar_humedad_ambiente.x = data.humedad_ambiente.x;
+            pintar_humedad_ambiente.y = data.humedad_ambiente.y;
+            pintar_temperatura_ambiente.x = data.temperatura_ambiente.x;
+            pintar_temperatura_ambiente.y = data.temperatura_ambiente.y;
+            pintar_humedad_suelo.x = data.humedad_suelo.x;
+            pintar_humedad_suelo.y = data.humedad_suelo.y;
+
+            Plotly.react("graficas_data1", [pintar_humedad_ambiente], layout_humedad_ambiente);
+            Plotly.react("graficas_data2", [pintar_temperatura_ambiente], layout_temperatura_ambiente);
+            Plotly.react("graficas_data3", [pintar_humedad_suelo], layout_humedad_suelo);
+        }
+    </script>
+</body>
+</html>

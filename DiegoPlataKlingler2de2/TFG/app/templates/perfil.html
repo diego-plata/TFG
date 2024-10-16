@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            display: flex;
+        }
+
+        .left-column,
+        .right-column {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .left-column {
+            border-right: 1px solid #ddd;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        legend {
+            color: #00796b;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"],
+        input[type="button"],
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00796b;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        button.delete {
+            background-color: #d32f2f;
+        }
+
+        .dispositivos {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        /* Tema Oscuro */
+        body.dark-theme {
+            background-color: #263238;
+            color: #ddd;
+        }
+
+        body.dark-theme .container {
+            background-color: #37474f;
+            color: #ddd;
+        }
+
+        body.dark-theme legend {
+            color: #90a4ae;
+        }
+
+        body.dark-theme label {
+            color: #bbb;
+        }
+
+        body.dark-theme input[type="text"],
+        body.dark-theme input[type="email"],
+        body.dark-theme input[type="password"] {
+            background-color: #455a64;
+            color: #ddd;
+        }
+
+        body.dark-theme input[type="submit"],
+        body.dark-theme input[type="button"],
+        body.dark-theme button {
+            background-color: #00796b;
+            color: #ffffff;
+        }
+
+        /* Estilos para el modal */
+        #modalEliminarCuenta {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        #modalEliminarCuenta .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        #modalEliminarCuenta .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #modalEliminarCuenta .close:hover,
+        #modalEliminarCuenta .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function guardarCambios() {
+            var dispositivosSeleccionados = [];
+            var checkboxes = document.querySelectorAll('input[name="dispositivos[]"]:checked');
+            checkboxes.forEach(function (checkbox) {
+                dispositivosSeleccionados.push(checkbox.value);
+            });
+            document.getElementById('dispositivosSeleccionados').value = dispositivosSeleccionados.join(',');
+            document.getElementById('dispositivosForm').submit();
+        }
+
+        function cambiarTema() {
+            var body = document.body;
+            body.classList.toggle("dark-theme");
+        }
+
+        function mostrarModalEliminarCuenta() {
+            var modal = document.getElementById('modalEliminarCuenta');
+            modal.style.display = 'block';
+        }
+
+        function cerrarModalEliminarCuenta() {
+            var modal = document.getElementById('modalEliminarCuenta');
+            modal.style.display = 'none';
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-column">
+            <h1>Perfil de Usuario</h1>
+
+            <fieldset>
+                <legend>Datos Actuales del Usuario:</legend>
+                <p>Nombre de Usuario: {{ usuario.username }}</p>
+                <p>Email: {{ usuario.mail }}</p>
+            </fieldset>
+
+            <fieldset>
+                <legend>Modificar Datos del Perfil:</legend>
+                <form id="perfilForm" action="{{ url_for('usuarios.actualizar_perfil') }}" method="POST">
+                    <label for="nombre">Nuevo Nombre:</label>
+                    <input type="text" id="nombre" name="nombre"><br>
+                    <label for="email">Nuevo Email:</label>
+                    <input type="email" id="email" name="email"><br>
+                    <label for="password">Nueva Contraseña:</label>
+                    <input type="password" id="password" name="password"><br>
+                    <input type="submit" value="Actualizar Perfil">
+                </form>
+            </fieldset>
+
+            <button class="delete" onclick="mostrarModalEliminarCuenta()">Eliminar Cuenta</button>
+        </div>
+
+        <div class="right-column">
+            <fieldset>
+                <legend>Dispositivos Registrados:</legend>
+                <ul class="dispositivos">
+                    {% for dispositivo_id in usuario.dispositivos_registrados_id.split(',') %}
+                    <li>{{ dispositivo_id }}</li>
+                    {% endfor %}
+                </ul>
+            </fieldset>
+
+            <fieldset>
+                <legend>Dispositivos Disponibles. Selecciona todos a los que quieras registrarte:</legend>
+                <form id="dispositivosForm" action="{{ url_for('usuarios.seleccionar_dispositivos') }}" method="POST">
+                    {% for dispositivo in todos_dispositivos %}
+                    <input type="checkbox" id="{{ dispositivo }}" name="dispositivos[]" value="{{ dispositivo }}"
+                        {% if dispositivo in dispositivos_seleccionados %} checked {% endif %}>
+                    <label for="{{ dispositivo }}">{{ dispositivo }}</label><br>
+                    {% endfor %}
+                    <input type="hidden" id="dispositivosSeleccionados" name="dispositivos_seleccionados" value="">
+                    <input type="button" value="Guardar Cambios" onclick="guardarCambios()">
+                </form>
+            </fieldset>
+        </div>
+    </div>
+
+    <!-- Modal para eliminar cuenta -->
+    <div id="modalEliminarCuenta">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalEliminarCuenta()">&times;</span>
+            <h2>Eliminar Cuenta</h2>
+            <p>Ingrese su contraseña para confirmar:</p>
+            <form action="{{ url_for('usuarios.eliminar_cuenta') }}" method="POST">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required><br>
+                <input type="submit" value="Eliminar Cuenta">
+            </form>
+        </div>
+    </div>
+
+
+    
+</body>
+
+</html>

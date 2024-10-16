@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00796b;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .alert {
+            margin-top: 20px;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .error {
+            margin-top: 20px;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        body.dark-theme {
+            background-color: #263238;
+            color: #ddd;
+        }
+
+        body.dark-theme .container {
+            background-color: #37474f;
+            color: #ddd;
+        }
+
+        body.dark-theme label {
+            color: #bbb;
+        }
+
+        body.dark-theme input[type="text"],
+        body.dark-theme input[type="password"] {
+            background-color: #455a64;
+            color: #ddd;
+        }
+
+        body.dark-theme input[type="submit"] {
+            background-color: #00796b;
+            color: #ffffff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .link {
+            display: block;
+            margin-top: 10px;
+            color: #00796b;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .link:hover {
+            color: #00574b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Iniciar Sesión</h2>
+        <form action="/login" method="post" onsubmit="return validarFormulario()">
+            <label for="username">Nombre de usuario:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required><br>
+            <input type="submit" value="Iniciar Sesión">
+        </form>
+        <span class="link" onclick="mostrarModal()">¿Olvidaste tu contraseña?</span>
+        {% if error %}
+        <div class="error">
+            Inicio de sesión incorrecto
+        </div>
+        {% endif %}
+        <span class="link" onclick="location.href='/registro'">¿No tienes una cuenta? Regístrate</span>
+        <button onclick="cambiarTema()">Cambiar Tema</button>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Recuperar Contraseña</h2>
+            <form id="recuperarForm" action="/recuperar_contrasena" method="post">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required><br>
+                <input type="submit" value="Enviar">
+            </form>
+            {% if mensaje %}
+            <div class="alert">
+               Error
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function validarFormulario() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            if (username === "" || password === "") {
+                alert("Por favor, complete todos los campos");
+                return false;
+            }
+            return true;
+        }
+
+        function cambiarTema() {
+            var body = document.body;
+            body.classList.toggle("dark-theme");
+        }
+
+        function mostrarModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        }
+
+        function cerrarModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenido</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0; /* Asegurar que no haya margen */
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 280px; /* Ajustado el ancho para evitar desbordamientos */
+            text-align: center; /* Centrar el contenido */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+
+        .button {
+            display: block;
+            width: calc(100% - 20px); /* Ajustado el ancho*/
+            padding: 10px;
+            margin: 10px auto; /* Centrar los botones */
+            border: none;
+            border-radius: 4px;
+            background-color: #00796b;
+            color: #ffffff;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #005f56;
+        }
+
+        /* Tema Oscuro */
+        body.dark-theme {
+            background-color: #263238;
+            color: #ddd;
+        }
+
+        body.dark-theme .container {
+            background-color: #37474f;
+            color: #ddd;
+        }
+
+        body.dark-theme .button {
+            background-color: #00796b;
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        function cambiarTema() {
+            var body = document.body;
+            body.classList.toggle("dark-theme");
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Bienvenido</h1>
+        <a href="{{ url_for('usuarios.login') }}" class="button">Login</a>
+        <a href="{{ url_for('usuarios.registro') }}" class="button">Registro</a>
+        <button class="button" onclick="cambiarTema()">Cambiar Tema</button>
+    </div>
+</body>
+
+</html>
